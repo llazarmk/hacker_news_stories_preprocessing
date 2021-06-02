@@ -1,15 +1,12 @@
 ### Hacker news stories_preprocessing
 
-This is one of the first service in a toy project
-for article recommender system and is mainly a learning
-tool for learning dataflow
+This service take the data from the hacker news big query public table,
+lemmatizes and enriches the original dataset with spacy, filter the
+url and domain and save the result in a big query table.
 
-Some inspirations and learning for this service are from 
-https://github.com/opentargets/library-beam
 
-Hackernews public dataset contains comments and stories  from the hacker news website.
-As first step we want to gain an insight from the text and comments. 
-We utilize spacy functionalities like,document entity label explanation.
+This is an example how we can integrate spacy with dataflow in google cloud
+
 
 A named entity is a “real-world object”
 that’s assigned a name – for example, a person, a country, a product or a book title. 
@@ -115,7 +112,7 @@ class HNStoriesProcessing(beam.PTransform):
 
         processed_data = (processed_data | 'CreateUrlPath' >> beam.ParDo(UrlParser(input_column=self.input_column_url,
                                                                                    output_column=self.output_column_url))
-                          | "GetUrlDomain" >> beam.Map(get_element_domain)
+                          
                           )
         return processed_data
 ```
@@ -164,6 +161,11 @@ https://beam.apache.org/documentation/programming-guide/
 
 - gcloud auth login
   gcloud auth application-default login
+  
+- python $SRC_PATH --input_bucket $INPUT_BUCKET \
+      --project $PROJECT --environment local\
+      --bq_input_table fh-bigquery.hackernews.storiesV2\
+      --bq_output_table news.hacker_news_stories
   
 
 
