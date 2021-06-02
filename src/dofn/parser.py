@@ -77,6 +77,21 @@ def remove_special_characters(document: str = None) -> Union[str, None]:
         return re.sub(clean, ' ', document)
 
 
+def filter_words(words: str, sep='/', k=2) -> str:
+    """
+    filter words with less then k values
+
+    :param words:
+    :param sep:
+    :param k:
+    :return:
+    """
+    list_words = words.split(sep)
+    list_words = [word.lower() for word in list_words if len(word) >= k]
+    words = " ".join(list_words)
+    return words
+
+
 class UrlParser(beam.DoFn):
 
     def __init__(self, input_column):
@@ -100,13 +115,6 @@ class UrlParser(beam.DoFn):
 
         self._output_column_category = f"{input_column}_category"
 
-    @staticmethod
-    def filter_url_category(url_category: str) -> str:
-        url_category_list_words = url_category.split("/")
-        url_category_list_words = [word.lower() for word in url_category_list_words if len(word) > 1]
-        url_category_words = " ".join(url_category_list_words)
-        return url_category_words
-
     def process(self, element: Dict, *args, **kwargs) -> Iterable[Dict]:
         output = element.copy()
         url = output[self._input_column]
@@ -119,7 +127,7 @@ class UrlParser(beam.DoFn):
                 url_domain, url_path = url_parser(url=url)
                 output[self._output_column_domain] = get_element_domain(url_domain)
                 url_category = url_path_parser(url_path=url_path)
-                url_category = self.filter_url_category(url_category)
+                url_category = filter_words(words=url_category,sep='/',k=2)
                 output[self._output_column_category] = url_category
         except Exception as e:
             logging.exception(f"Url parser exception: {e}")
