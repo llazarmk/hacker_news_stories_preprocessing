@@ -83,8 +83,8 @@ class TextAnalyser(beam.DoFn):
         documents, id_values, id_values_none = self.prepare_document_ids_for_spacy(column, output)
         output = [id_values[_id] for _id in id_values_none]
         try:
-            spacy_processing = self.spacy_handler.process(text_key=documents)
-            for result in spacy_processing:
+            spacy_processed_data = self.spacy_handler.process(text_key=documents)
+            for result in spacy_processed_data:
                 spacy_idx = result['idx']
                 original_document = id_values[spacy_idx]
                 original_document[self.le_col_name] = result['label_entity']
