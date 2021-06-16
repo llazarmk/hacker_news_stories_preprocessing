@@ -61,12 +61,13 @@ class TextAnalyser(beam.DoFn):
         :param element:
         :return:
         """
-        document = element[self.feature_column]
-        id_value = element[self.id_column]
+        output = element.copy()
+        document = output[self.feature_column]
+        id_value = output[self.id_column]
         if document:
-           element[self.feature_column] = remove_html_tags(document=document)
-           element[self.feature_column] = remove_special_characters(document=document)
-        return element
+           output[self.feature_column] = remove_html_tags(document=document)
+           output[self.feature_column] = remove_special_characters(document=document)
+        return output
 
     def prepare_document_ids_for_spacy(self, column, output):
         id_values = {elem[self.id_column]: elem for elem in output}
