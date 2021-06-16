@@ -64,11 +64,8 @@ class TextAnalyser(beam.DoFn):
         document = element[self.feature_column]
         id_value = element[self.id_column]
         if document:
-            try:
-                element[self.feature_column] = remove_html_tags(document=document)
-                element[self.feature_column] = remove_special_characters(document=document)
-            except Exception as e:
-                logging.exception(f"{str(id_value)} special character removal exception: {e}")
+           element[self.feature_column] = remove_html_tags(document=document)
+           element[self.feature_column] = remove_special_characters(document=document)
         return element
 
     def prepare_document_ids_for_spacy(self, column, output):
